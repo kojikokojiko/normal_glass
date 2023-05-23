@@ -21,6 +21,7 @@ import random
 import time
  
 
+media_dir="/media/isobelab2022/data/normal_glass/ver2"
 first_time=time.time()
 # INPUT PARAMETER
 nu=float(sys.argv[1])
@@ -159,6 +160,11 @@ if not os.path.exists(main_dir): os.makedirs(main_dir)
 print(main_dir)
 os.chdir(main_dir)
 
+traj_dir=media_dir+"/"+ver
+if not os.path.exists(traj_dir):
+    os.makedirs(traj_dir)
+
+traj_path=traj_dir+"/log_pos_"+ver+".gsd"
 
 fixed_id=[]
 
@@ -241,7 +247,7 @@ sim.operations.writers.append(custom_op)
 pos_logger = hoomd.logging.Logger()
 # pos_logger.add(sim, quantities=['timestep', 'walltime'])
 # pos_logger.add(thermodynamic_properties,quantities=["kinetic_temperature","kinetic_energy","potential_energy","volume"])
-gsd_writer_pos = hoomd.write.GSD(filename="log_pos_"+ver+".gsd",
+gsd_writer_pos = hoomd.write.GSD(filename=traj_path,
                             #  trigger=hoomd.trigger.Periodic(pos_hout),
                             trigger=hoomd.trigger.And([
                                     hoomd.trigger.After(after_steps),
@@ -300,7 +306,7 @@ os.chdir("../")
 
 
 
-traj = gsd.hoomd.open('./'+ver+'/log_pos_'+ver+'.gsd', 'rb')
+traj = gsd.hoomd.open(traj_path, 'rb')
 
 
 
@@ -319,7 +325,7 @@ print(len(traj))
 sigma=traj[0].particles.diameter
 set_sigma=list(set(sigma))
 
-for t in range(len(traj)-1,0,-4):
+for t in range(len(traj)-1,0,image_out_period):
     print(t)
     bx=plt.axes()
     plt.axis([-lx/2,lx/2,-ly/2,ly/2])

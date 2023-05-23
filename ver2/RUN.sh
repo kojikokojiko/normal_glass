@@ -2,10 +2,10 @@
 
 
 
-nu_list=(   0.8 )
+nu_list=(  0.72 0.74 0.76  0.78 0.8 )
 # 0.55 0.6 0.65 0.7 0.75 0.8)
 fixed_per_list=(0.0)
-kbT_list=(1.0 0.5 0.1)
+kbT_list=(1.0 0.5 )
 
 for nu in "${nu_list[@]}"
 do 
