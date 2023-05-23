@@ -19,6 +19,7 @@ import IPython
 import packaging.version
 import random
 import time
+import pickle
  
 
 media_dir="/media/isobelab2022/data/normal_glass/ver2"
@@ -71,10 +72,18 @@ nsteps=int(real_time/dt)
 after_steps=int(after_time/dt)
 # 出力をしているときの送ステップ数
 pos_out_steps=int(pos_out_time/dt)
-# 出力をしているときのステップ数の間隔
-pos_out_steps_period=5
+
+########################################################出力間隔調整
+# # 出力をしているときのステップ数の間隔
+# pos_out_steps_period=5
+# # 総出力回数
+# num_out=int(pos_out_steps/pos_out_steps_period)
+########################################################総出力回数調整
 # 総出力回数
-num_out=int(pos_out_steps/pos_out_steps_period)
+num_out=int(500)
+# 出力をしているときのステップ数の間隔
+pos_out_steps_period=int(pos_out_steps/num_out)
+##############################################################
 # image出力枚数
 image_out_num=150
 # 総出力回数に対してイメージを出力させる間隔
@@ -155,10 +164,13 @@ sigma_sl=(small_sigma+large_sigma)/2
 
 
 ver=str(nu)+"_"+str(fixed_percent)+"_"+str(kbT)
+
 main_dir="./"+ver
 if not os.path.exists(main_dir): os.makedirs(main_dir)
 print(main_dir)
 os.chdir(main_dir)
+
+
 
 traj_dir=media_dir+"/"+ver
 if not os.path.exists(traj_dir):
@@ -289,13 +301,19 @@ variables = {
     'sigma_sl': sigma_sl
 }
 
-with open('data.txt', 'w') as f:
+# ファイルにほぞん.txt
+with open(traj_dir+'/data.txt', 'w') as f:
     for var_name, var_value in variables.items():
         f.write(f'{var_name} {var_value}\n')
 
 
+# ファイルに保存.pickle
+with open(traj_dir+'/data.pickle', 'wb') as handle:
+    pickle.dump(variables, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-
+# # ファイルから読み込み
+# with open('my_dict.pickle', 'rb') as handle:
+#     loaded_dict = pickle.load(handle)
 
 sim.run(nsteps)
 
