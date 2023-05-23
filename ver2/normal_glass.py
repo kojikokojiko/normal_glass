@@ -54,8 +54,6 @@ m=1.0
 epsilon=1.0
 
 
-
-v0=1.0
 # 刻み幅小さすぎの可能性もあるから大きめにしてみてもいいかも
 
 # 総時間幅
@@ -140,8 +138,6 @@ sigma=binary_a(temp_radius,N,ly,N1,AL)
 print(len(sigma))
 sigma=[sigma[i]*2 for i in range(N)]
 print(len(sigma))
-
-
 
 
 
@@ -312,7 +308,7 @@ with open(traj_dir+'/data.pickle', 'wb') as handle:
     pickle.dump(variables, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 # # ファイルから読み込み
-# with open('my_dict.pickle', 'rb') as handle:
+# with open('data.pickle', 'rb') as handle:
 #     loaded_dict = pickle.load(handle)
 
 sim.run(nsteps)
