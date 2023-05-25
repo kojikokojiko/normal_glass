@@ -78,7 +78,7 @@ pos_out_steps=int(pos_out_time/dt)
 # num_out=int(pos_out_steps/pos_out_steps_period)
 ########################################################総出力回数調整
 # 総出力回数
-num_out=int(500)
+num_out=int(2000)
 # 出力をしているときのステップ数の間隔
 pos_out_steps_period=int(pos_out_steps/num_out)
 ##############################################################

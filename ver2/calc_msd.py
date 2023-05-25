@@ -47,8 +47,8 @@ with open(data_path, mode='rb') as f:
 
 dt=data["dt"]
 pos_out_steps_period=data["pos_out_steps_period"]
-msd_times=[i*dt*pos_out_steps_period for i in range(len(traj)-1)]
 small_sigma=data["sigma_ss"]
+msd_times=[i*dt*pos_out_steps_period for i in range(len(traj)-1)]
 zerod_time=msd_times/small_sigma
 
 msd_list=np.array(zerod_time)
@@ -135,22 +135,39 @@ for t in range(T):
     for i in range(N):
         dx=rx[i][t]-rx[i][0]
         dy=ry[i][t]-ry[i][0]
+
+
         m2_element=dx*dx+dy*dy
         m4_element=m2_element*m2_element
         m2 += m2_element
         m4 += m4_element
         
+    if (t==0):
+        print(m2)
+        print(m4)
+            
     m2 /= N
     m4 /= N
 
     msd = m2 / ((small_sigma) ** 2)
-    ngp = ((m4/(m2**2))/2) - 1
 
+    if (t==0):
+        ngp=0
+    else:
+        gp = ((m4/(m2**2))/2) - 1
+    # if (t==0):
+    #     print(msd)
+    #     print(ngp)
+            
 
     msd_list.append(msd)
+    if (t<10):
+        print(msd_list)
     ngp_list.append(ngp)
 
 
+print("dfdfdfdfd)")
+print(msd_list[0])
 
 plt.plot(msd_list)
 plt.savefig(main_dir+"/msd_list.png")

@@ -15,9 +15,9 @@ do
         do
             echo $nu   $fixed_per $kbT
             name="${nu}_${fixed_per}_${kbT}"
-            # nohup time python normal_glass.py $nu  $fixed_per $kbT> ${name}.log 2>&1 &
-            # nohup time python animation.py $nu  $fixed_per $kbT> ${name}.log 2>&1 &
-            nohup time python calc_msd.py $nu  $fixed_per $kbT> ${name}.log 2>&1 &
+            nohup time python normal_glass.py $nu  $fixed_per $kbT> ${name}.log 2>&1 &
+            nohup time python animation.py $nu  $fixed_per $kbT> ${name}.log 2>&1 &
+            # nohup time python calc_msd.py $nu  $fixed_per $kbT> ${name}.log 2>&1 &
         done
     done
 done
