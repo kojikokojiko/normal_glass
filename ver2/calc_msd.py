@@ -142,32 +142,20 @@ for t in range(T):
         m2 += m2_element
         m4 += m4_element
         
-    if (t==0):
-        print(m2)
-        print(m4)
             
     m2 /= N
     m4 /= N
 
     msd = m2 / ((small_sigma) ** 2)
-
+# 初回だけngp=0とする
     if (t==0):
         ngp=0
     else:
-        gp = ((m4/(m2**2))/2) - 1
-    # if (t==0):
-    #     print(msd)
-    #     print(ngp)
-            
+        gp = ((m4/(m2**2))/2) - 1 
 
     msd_list.append(msd)
-    if (t<10):
-        print(msd_list)
     ngp_list.append(ngp)
 
-
-print("dfdfdfdfd)")
-print(msd_list[0])
 
 plt.plot(msd_list)
 plt.savefig(main_dir+"/msd_list.png")
