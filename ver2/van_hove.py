@@ -40,7 +40,7 @@ traj_dir=media_dir+"/"+ver
 traj_path=traj_dir+"/log_pos_"+ver+".gsd"
 traj = gsd.hoomd.open(traj_path, 'rb')
 
-data_path=media_dir+"/"+ver+"/data.pickle"
+data_path=traj_dir+"/data.pickle"
 with open(data_path, mode='rb') as f:
     data = pickle.load(f)
 
@@ -52,7 +52,8 @@ small_sigma=data["sigma_ss"]
 msd_times=[i*dt*pos_out_steps_period for i in range(len(traj)-1)]
 zerod_time=msd_times/small_sigma
 
-zerod_time=np.array(zerod_time)
+msd_list=np.array(zerod_time)
+np.save(traj_dir+"/zerod_time_for_van_hove.npy",zerod_time)
 
 
 
@@ -102,41 +103,32 @@ T=rx.shape[1]
 
 msd_list = []
 ngp_list = []
+bins_list=[]
+van_hove_list = []
+
 for t in range(T):
-    m2=0.0
-    m4=0.0
+    van_hove_element=0.0
+    delta_r_list=[]
 
     for i in range(N):
         dx=rx[i][t]-rx[i][0]
         dy=ry[i][t]-ry[i][0]
+        delta_r=np.sqrt(dx*dx+dy*dy)
+        # ここで無次元化してある
+        delta_r_list.append(delta_r/small_sigma)
+    
+    van_hove,bins=np.histogram(delta_r_list,bins=1000,density=True,range=(0,5))
 
 
-        m2_element=dx*dx+dy*dy
-        m4_element=m2_element*m2_element
-        m2 += m2_element
-        m4 += m4_element
-        
-            
-    m2 /= N
-    m4 /= N
+    van_hove_list.append(van_hove)
+    bins_list.append(bins)
 
-    msd = m2 / ((small_sigma) ** 2)
-# 初回だけngp=0とする
-    if (t==0):
-        ngp=0
-    else:
-        gp = ((m4/(m2**2))/2) - 1 
-
-    msd_list.append(msd)
-    ngp_list.append(ngp)
+van_hove_list=np.array(van_hove_list)
+np.save(traj_dir+"/van_hove_list.npy",van_hove_list)
 
 
-msd_list=np.array(msd_list)
-np.savez(traj_dir+"/msd.npy",msd_list=msd_list,zerod_time=zerod_time)
+np.savez("van_hove.npy",zerod_time=zerod_time,van_hove_list=van_hove_list,bins_list=bins_list)
 
-
-msd_list=np.array(ngp_list)
-np.savez(traj_dir+"/ngp.npz",ngp_list=ngp_list,zerod_time=zerod_time)
 
 print("FiNISH")
 

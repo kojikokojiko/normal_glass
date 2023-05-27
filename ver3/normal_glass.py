@@ -22,7 +22,7 @@ import time
 import pickle
  
 
-media_dir="/media/isobelab2022/data/normal_glass/ver2"
+media_dir="/media/isobelab2022/data/normal_glass/ver3"
 first_time=time.time()
 # INPUT PARAMETER
 nu=float(sys.argv[1])
@@ -57,22 +57,19 @@ epsilon=1.0
 # 刻み幅小さすぎの可能性もあるから大きめにしてみてもいいかも
 
 # 総時間幅
-real_time=500
+real_time=200
 # 出力を始めるまでの時間幅＝＞平衡状態に達するまでの時間
-after_time=50
+after_time=20
 # 出力をしている時間幅
 pos_out_time=(real_time-after_time)
 # 刻み時間
 dt = 4.0e-5
 # 総ステップ数
-nsteps=round(real_time/dt)
+nsteps=int(real_time/dt)
 # 出力を始めるまでのステップ数
-after_steps=round(after_time/dt)
+after_steps=int(after_time/dt)
 # 出力をしているときの送ステップ数
-# 四捨五入
-
-
-pos_out_steps=round(pos_out_time/dt)
+pos_out_steps=int(pos_out_time/dt)
 
 ########################################################出力間隔調整
 # # 出力をしているときのステップ数の間隔
@@ -81,14 +78,14 @@ pos_out_steps=round(pos_out_time/dt)
 # num_out=int(pos_out_steps/pos_out_steps_period)
 ########################################################総出力回数調整
 # 総出力回数
-num_out=int(10000)
+num_out=int(4000)
 # 出力をしているときのステップ数の間隔
 pos_out_steps_period=int(pos_out_steps/num_out)
 ##############################################################
 # image出力枚数
-image_out_num=100
+image_out_num=150
 # 総出力回数に対してイメージを出力させる間隔
-image_out_period=round(num_out/image_out_num)
+image_out_period=int(num_out/image_out_num)
 
 
 
@@ -254,19 +251,20 @@ custom_op = hoomd.write.CustomWriter(action=custom_action,
 sim.operations.writers.append(custom_op)
 
 
+
+
+
 # logger定義
 pos_logger = hoomd.logging.Logger()
 # pos_logger.add(sim, quantities=['timestep', 'walltime'])
 # pos_logger.add(thermodynamic_properties,quantities=["kinetic_temperature","kinetic_energy","potential_energy","volume"])
 gsd_writer_pos = hoomd.write.GSD(filename=traj_path,
-                                trigger=hoomd.trigger.And([
-                                        hoomd.trigger.After(after_steps),
-                                        hoomd.trigger.Periodic(pos_out_steps_period)]
-                                        
-                                        ),
-                                # trigger=hoomd.trigger.Periodic(pos_out_steps_period),
-                                mode='xb',
-                                filter=hoomd.filter.All())
+                            #  trigger=hoomd.trigger.Periodic(pos_hout),
+                            trigger=hoomd.trigger.And([
+                                    hoomd.trigger.After(after_steps),
+                                    hoomd.trigger.Periodic(pos_out_steps_period)]),
+                             mode='xb',
+                             filter=hoomd.filter.All())
 gsd_writer_pos.log = pos_logger
 
 sim.operations.writers.append(gsd_writer_pos)
@@ -303,7 +301,7 @@ variables = {
 }
 
 # ファイルにほぞん.txt
-with open(main_dir+'/data.txt', 'w') as f:
+with open(traj_dir+'/data.txt', 'w') as f:
     for var_name, var_value in variables.items():
         f.write(f'{var_name} {var_value}\n')
 
@@ -316,13 +314,10 @@ with open(traj_dir+'/data.pickle', 'wb') as handle:
 # with open('data.pickle', 'rb') as handle:
 #     loaded_dict = pickle.load(handle)
 
-
-# ここで、シミュレーションを実行します。
-# コメントアウトされていると実行されないので注意
 sim.run(nsteps)
 
-
 print(time.time()-first_time)
+
 print(time.time()-second_time)
 os.chdir("../")
 
@@ -331,7 +326,7 @@ os.chdir("../")
 traj = gsd.hoomd.open(traj_path, 'rb')
 
 
-pos=[traj[i].particles.position for i in range(len(traj)-1)]
+
 
 
 
@@ -389,4 +384,3 @@ if not os.path.exists(gif_output_dir): os.makedirs(gif_output_dir)
 images[0].save(gif_output_dir+"/out_ela2.gif",save_all=True,append_images=images[1:],loop=0,duration=10)
     
     
-del traj
