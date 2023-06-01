@@ -52,10 +52,6 @@ small_sigma=data["sigma_ss"]
 msd_times=[i*dt*pos_out_steps_period for i in range(len(traj)-1)]
 zerod_time=msd_times/small_sigma
 
-msd_list=np.array(zerod_time)
-np.save(traj_dir+"/zerod_time_for_van_hove.npy",zerod_time)
-
-
 
 
 
@@ -117,17 +113,15 @@ for t in range(T):
         # ここで無次元化してある
         delta_r_list.append(delta_r/small_sigma)
     
-    van_hove,bins=np.histogram(delta_r_list,bins=1000,density=True,range=(0,5))
+    van_hove,bins=np.histogram(delta_r_list,bins=200,density=True,range=(0,3))
 
 
     van_hove_list.append(van_hove)
-    bins_list.append(bins)
+    # bins_list.append(bins)
 
 van_hove_list=np.array(van_hove_list)
-np.save(traj_dir+"/van_hove_list.npy",van_hove_list)
-
-
-np.savez("van_hove.npy",zerod_time=zerod_time,van_hove_list=van_hove_list,bins_list=bins_list)
+bins=np.array(bins)
+np.savez(traj_dir+"/van_hove.npz",zerod_time=zerod_time,van_hove_list=van_hove_list,bins=bins)
 
 
 print("FiNISH")

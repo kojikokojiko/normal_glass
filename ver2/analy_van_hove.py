@@ -40,18 +40,26 @@ main_dir="./"+ver
 traj_dir=media_dir+"/"+ver
 
 
-van_hove_path=traj_dir+"/van_hove_list.npz"
+van_hove_path=traj_dir+"/van_hove.npz"
 
 van_hove_npz=np.load(van_hove_path)
+print(van_hove_npz.files)
 van_hove_list=van_hove_npz["van_hove_list"]
 zerod_time=van_hove_npz["zerod_time"]
-bins_list=van_hove_npz["bins_list"]
+bins=van_hove_npz["bins"]
 
 
 
 
+print(zerod_time.shape)
+print(van_hove_list.shape)
+print(bins.shape)
 
-watch_around_time_list=[20,30,40]
+
+print(bins[0])
+
+bins_list=np.array(bins)
+watch_around_time_list=[0.1,1.0,10,100,300,500]
 
 watch_index_list=[]
 for watch_around_time in watch_around_time_list:
@@ -65,17 +73,23 @@ for watch_index in watch_index_list:
     delta_t=zerod_time[watch_index]
 
     van_hove=van_hove_list[watch_index] 
-    bins=bins_list[watch_index]
-    plt.plot(bins, van_hove)
+    # ビンの中心を計算
+    bins_centers = (bins[:-1] + bins[1:]) / 2
+    # print(bins_centers)
 
 
-plt.xscale("log")
+    plt.plot(bins_centers, van_hove,label="delta_t={0}".format(delta_t))
+
+    # plt.hist(van_hove,label="delta_t={0}".format(delta_t),bins=10000)
+
+
 plt.xlabel('delta_r')
+plt.yscale("log")
 plt.ylabel('P(delta_r,delta_t)')
-plt.title('van hove plot')
+plt.title('van hove plot(kbT={0},nu={1})'.format(kbT,nu))
 plt.legend()
 
-plt.savefig("van_hove_analy_{0}kbT_{1}nu.png".format(kbT,nu))
+plt.savefig(main_dir+"/van_hove_analy_{0}kbT_{1}nu.png".format(kbT,nu))
 
 
 

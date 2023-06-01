@@ -125,14 +125,14 @@ for t in range(T):
     if (t==0):
         ngp=0
     else:
-        gp = ((m4/(m2**2))/2) - 1 
+        ngp = ((m4/(m2**2))/2) - 1 
 
     msd_list.append(msd)
     ngp_list.append(ngp)
 
 
 msd_list=np.array(msd_list)
-np.savez(traj_dir+"/msd.npy",msd_list=msd_list,zerod_time=zerod_time)
+np.savez(traj_dir+"/msd.npz",msd_list=msd_list,zerod_time=zerod_time)
 
 
 msd_list=np.array(ngp_list)
